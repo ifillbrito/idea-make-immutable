@@ -5,14 +5,14 @@
     <vendor email="grebiel.ifillbrito@gmail.com" url="https://github.com/ifillbrito">Grebiel Ifill Brito</vendor>
 
     <description><![CDATA[
-      This plugin makes a class immutable by doing the following refactoring:<br>
+      This plugin makes a class immutable by applying the following changes:<br>
       <ul>
-        <li>The class modifier "final" is added is not present.</li>
-        <li>All fields modifier "final" is added is not present.</li>
-        <li>The constructor visibility is changed to private.</li>
-        <li>A static constructor is generated (method name: "of") based on the private constructor.</li>
-        <li>Getters are generated</li>
-        <li>With-Methods are generated. This methods allow creating a new immutable object based on the current one.</li>
+        <li>Class modifier "final" added if not present.</li>
+        <li>Fields modifier "final" added if not present.</li>
+        <li>Constructor/s visibility changed to private.</li>
+        <li>Generation of static constructor/s (method name: "of") for each private constructor.</li>
+        <li>Generation of getters</li>
+        <li>Generation of withers (withXYZ methods). This methods allow creating a new immutable object based on the current one.</li>
       </ul>
     ]]></description>
 
@@ -22,6 +22,7 @@
           <li>Bug fix: static no argument constructor is generated correctly.</li>
           <li>Support for multiple static constructors added. The static constructors are generated based on existing constructors.</li>
           <li>Support for parameterized classes added.</li>
+          <li>Generation of existing methods is skipped.</li>
       </ul>
       Version 0.1:
       <ul>

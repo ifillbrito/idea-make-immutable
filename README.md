@@ -1,12 +1,17 @@
 # Make Immutable IDEA-Plugin
-This plugin makes a class immutable by doing the following refactoring:
+This plugin makes a class immutable by applying the following changes:
      
-- The class modifier "final" is added is not present.
-- All fields modifier "final" is added is not present.
-- The constructor visibility is changed to private.
-- A static constructor is generated (method name: "of") based on the private constructor.
-- Getters are generated.
-- With-Methods are generated. This methods allow creating a new immutable object based on the current one.
+- Class modifier "final" is added is not present.
+- Fields modifier "final" is added is not present.
+- Constructor/s visibility changed to private.
+- Generation of static constructor (method name: "of") for each private constructor.
+- Generation of getters.
+- Generation of withers (withXYZ Methods).
+
+## Usage
+To Generate the necessary code go to:
+
+Code | Generate (Alt + Insert) | Make Immutable
 
 ## Example
 Let's assume you have the following class (no getters and setters):
@@ -68,11 +73,6 @@ public final class Person {
 
 }
 ``` 
-## TODOs
-- [ ] Create static constructor `of` matching "normal" constructor only if it does not already exists.
-- [ ] Create getters only if they do not already exists.
-- [ ] Create with-Methods only if they do not already exists.
-- [ ] Add support for parameterized classes (`public class SomeClass<SomeType> { ... }`).
 
 ## License
 

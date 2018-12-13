@@ -11,7 +11,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class MakeImmutableAction extends BaseGenerateAction {
 
-    private static final String CONFIRMATION_MESSAGE = "Do you want to make this class immutable?";
+    private static final String CONFIRMATION_MESSAGE = "Do you want to make this class immutable? \n\n" +
+            "The following changes will be applied: \n\n" +
+            "- Class modifier \"final\" added if not present.\n" +
+            "- Fields modifier \"final\" added if not present.\n" +
+            "- Constructor/s visibility changed to private.\n" +
+            "- Generation of static constructor/s (method name: \"of\") for each private constructor.\n" +
+            "- Generation of getters.\n" +
+            "- Generation of withers (withXYZ methods).";
 
     private static final String CONFIRMATION_TITLE = "Confirmation";
     private static final String ERROR_TITLE = "Error";

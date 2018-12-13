@@ -41,7 +41,9 @@ public class CodeGenerator {
             PsiMethod psiConstructor = visitor.getPsiConstructors().get(i);
             if (psiConstructor != visitor.getPsiMaxConstructor()) {
                 PsiMethod staticConstructor = createStaticConstructor(psiConstructor, visitor.getStaticConstructorParameters(), psiClass, elementFactory);
-                psiClass.addAfter(staticConstructor, staticMaxConstructor);
+                if (!visitor.methodExists(staticConstructor)) {
+                    psiClass.addAfter(staticConstructor, staticMaxConstructor);
+                }
             }
         }
     }
@@ -49,7 +51,10 @@ public class CodeGenerator {
     private PsiMethod createMaxStaticConstructor(MakeImmutableVisitor visitor, PsiClass psiClass, PsiElementFactory elementFactory) {
         PsiMethod psiConstructor = visitor.getPsiMaxConstructor();
         PsiMethod staticConstructor = createStaticConstructor(psiConstructor, visitor.getStaticConstructorParameters(), psiClass, elementFactory);
-        return (PsiMethod) psiClass.addAfter(staticConstructor, psiConstructor);
+        if (!visitor.methodExists(staticConstructor)) {
+            return (PsiMethod) psiClass.addAfter(staticConstructor, psiConstructor);
+        }
+        return visitor.findMethodMatching(staticConstructor);
     }
 
     private PsiMethod createStaticConstructor(PsiMethod psiConstructor, String staticConstructorTypeParams, PsiClass psiClass, PsiElementFactory elementFactory) {
@@ -101,8 +106,10 @@ public class CodeGenerator {
                 }
             }
             code.append(");}");
-            PsiMethod getter = elementFactory.createMethodFromText(code.toString(), psiClass);
-            psiClass.addAfter(getter, staticConstructor);
+            PsiMethod wither = elementFactory.createMethodFromText(code.toString(), psiClass);
+            if (!visitor.methodExists(wither)) {
+                psiClass.addAfter(wither, staticConstructor);
+            }
         }
     }
 
@@ -116,8 +123,10 @@ public class CodeGenerator {
             code.append(String.format("public %s %s%s()", psiField.getType().getPresentableText(), getterPrefix, getterName));
             code.append(String.format("{ return %s; }", psiField.getName()));
             PsiMethod getter = elementFactory.createMethodFromText(code.toString(), psiClass);
-            psiClass.addAfter(getter, staticConstructor);
-            existingFieldNames.add(psiField.getName());
+            if (!visitor.methodExists(getter)) {
+                psiClass.addAfter(getter, staticConstructor);
+                existingFieldNames.add(psiField.getName());
+            }
         }
 
         PsiParameter[] constructorParameters = visitor.getMaxConstructorParameters();
@@ -130,7 +139,9 @@ public class CodeGenerator {
                 code.append(String.format("public %s %s%s()", psiParameter.getType().getPresentableText(), getterPrefix, getterName));
                 code.append("{ throw new RuntimeException(\"This method must be implemented\"); // TODO\n }");
                 PsiMethod getter = elementFactory.createMethodFromText(code.toString(), psiClass);
-                psiClass.addAfter(getter, staticConstructor);
+                if (!visitor.methodExists(getter)) {
+                    psiClass.addAfter(getter, staticConstructor);
+                }
             }
         }
     }
