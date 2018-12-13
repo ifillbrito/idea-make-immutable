@@ -69,8 +69,11 @@ public final class Person {
 }
 ``` 
 ## TODOs
-[ ] Validations: no validations are made. If the class is already immutable,
-the static constructor, the getters and the with-methods will be generated anyway.
+- [ ] Create static constructor `of` matching "normal" constructor only if it does not already exists.
+- [ ] Create getters only if they do not already exists.
+- [ ] Create with-Methods only if they do not already exists.
+- [ ] Add support for multiple constructors.
+- [ ] Add support for parameterized classes (`public class SomeClass<SomeType> { ... }`).
 
 ## License
 
