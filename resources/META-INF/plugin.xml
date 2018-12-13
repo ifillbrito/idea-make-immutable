@@ -1,0 +1,36 @@
+<idea-plugin>
+  <id>com.ifillbrito.immutable</id>
+  <name>Make Immutable</name>
+  <version>0.1</version>
+  <vendor email="grebiel.ifillbrito@gmail.com" url="https://github.com/ifillbrito">Grebiel Ifill Brito</vendor>
+
+  <description><![CDATA[
+      This plugin makes a class immutable by doing the following refactoring:<br>
+      <ul>
+        <li>The class modifier "final" is added is not present.</li>
+        <li>All fields modifier "final" is added is not present.</li>
+        <li>The constructor visibility is changed to private.</li>
+        <li>A static constructor is generated (method name: "of") based on the private constructor.</li>
+        <li>Getters are generated</li>
+        <li>With-Methods are generated. This methods allow creating a new immutable object based on the current one.</li>
+      </ul>
+    ]]></description>
+
+  <change-notes><![CDATA[
+      First Release.
+    ]]>
+  </change-notes>
+
+  <idea-version since-build="173.0"/>
+
+  <extensions defaultExtensionNs="com.intellij">
+  </extensions>
+
+  <actions>
+    <action id="MakeImmutable" class="com.ifillbrito.idea.immutable.MakeImmutableAction" text="Make Immutable"
+            description="Makes the class immutable">
+      <add-to-group group-id="JavaGenerateGroup1" anchor="before" relative-to-action="GenerateConstructor"/>
+    </action>
+  </actions>
+
+</idea-plugin>
