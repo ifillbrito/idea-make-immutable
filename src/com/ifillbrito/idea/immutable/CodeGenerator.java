@@ -29,9 +29,59 @@ public class CodeGenerator {
         psiClass.getModifierList().setModifierProperty(PsiModifier.FINAL, true);
         PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(psiClass.getProject());
 
-        PsiMethod staticConstructor = createStaticConstructor(visitor, psiClass, elementFactory);
+        PsiMethod staticMaxConstructor = createMaxStaticConstructor(visitor, psiClass, elementFactory);
+        createWithers(visitor, psiClass, elementFactory, staticMaxConstructor);
+        createGetters(visitor, psiClass, elementFactory, staticMaxConstructor);
+        createFurtherStaticConstructors(visitor, staticMaxConstructor, psiClass, elementFactory);
 
-        PsiParameter[] constructorParameters = visitor.getConstructorParameters();
+    }
+
+    private void createFurtherStaticConstructors(MakeImmutableVisitor visitor, PsiMethod staticMaxConstructor, PsiClass psiClass, PsiElementFactory elementFactory) {
+        for (int i = visitor.getPsiConstructors().size() - 1; i >= 0; i--) {
+            PsiMethod psiConstructor = visitor.getPsiConstructors().get(i);
+            if (psiConstructor != visitor.getPsiMaxConstructor()) {
+                PsiMethod staticConstructor = createStaticConstructor(psiConstructor, visitor.getStaticConstructorParameters(), psiClass, elementFactory);
+                psiClass.addAfter(staticConstructor, staticMaxConstructor);
+            }
+        }
+    }
+
+    private PsiMethod createMaxStaticConstructor(MakeImmutableVisitor visitor, PsiClass psiClass, PsiElementFactory elementFactory) {
+        PsiMethod psiConstructor = visitor.getPsiMaxConstructor();
+        PsiMethod staticConstructor = createStaticConstructor(psiConstructor, visitor.getStaticConstructorParameters(), psiClass, elementFactory);
+        return (PsiMethod) psiClass.addAfter(staticConstructor, psiConstructor);
+    }
+
+    private PsiMethod createStaticConstructor(PsiMethod psiConstructor, String staticConstructorTypeParams, PsiClass psiClass, PsiElementFactory elementFactory) {
+        psiConstructor.getModifierList().setModifierProperty(PsiModifier.PRIVATE, true);
+
+        StringBuilder code = new StringBuilder();
+        code.append(String.format("public static %s %s of(", staticConstructorTypeParams, psiClass.getName()));
+        PsiParameter[] parameters = psiConstructor.getParameterList().getParameters();
+        for (int i = 0; i < parameters.length; i++) {
+            PsiParameter parameter = parameters[i];
+            if (i < parameters.length - 1) {
+                code.append(String.format("%s %s,", parameter.getType().getPresentableText(), parameter.getName()));
+            } else {
+                code.append(String.format("%s %s", parameter.getType().getPresentableText(), parameter.getName()));
+            }
+        }
+        code.append(") {");
+        code.append(String.format("return new %s (", psiClass.getName() + staticConstructorTypeParams));
+        for (int i = 0; i < parameters.length; i++) {
+            PsiParameter parameter = parameters[i];
+            if (i < parameters.length - 1) {
+                code.append(String.format("%s,", parameter.getName()));
+            } else {
+                code.append(String.format("%s", parameter.getName()));
+            }
+        }
+        code.append("); }");
+        return elementFactory.createMethodFromText(code.toString(), psiClass);
+    }
+
+    private void createWithers(MakeImmutableVisitor visitor, PsiClass psiClass, PsiElementFactory elementFactory, PsiMethod staticConstructor) {
+        PsiParameter[] constructorParameters = visitor.getMaxConstructorParameters();
         for (int i = constructorParameters.length - 1; i >= 0; i--) {
             PsiParameter methodParameter = constructorParameters[i];
             String getterName = getMethodNameWithoutPrefix(methodParameter.getName());
@@ -54,38 +104,6 @@ public class CodeGenerator {
             PsiMethod getter = elementFactory.createMethodFromText(code.toString(), psiClass);
             psiClass.addAfter(getter, staticConstructor);
         }
-
-        createGetters(visitor, psiClass, elementFactory, staticConstructor);
-
-    }
-
-    private PsiMethod createStaticConstructor(MakeImmutableVisitor visitor, PsiClass psiClass, PsiElementFactory elementFactory) {
-        PsiMethod psiConstructor = visitor.getPsiConstructor();
-        psiConstructor.getModifierList().setModifierProperty(PsiModifier.PRIVATE, true);
-
-        StringBuilder code = new StringBuilder();
-        code.append(String.format("public static %s of(", psiClass.getName()));
-        PsiParameter[] parameters = visitor.getConstructorParameters();
-        for (int i = 0; i < parameters.length; i++) {
-            PsiParameter parameter = parameters[i];
-            if (i < parameters.length - 1) {
-                code.append(String.format("%s %s,", parameter.getType().getPresentableText(), parameter.getName()));
-            } else {
-                code.append(String.format("%s %s) {", parameter.getType().getPresentableText(), parameter.getName()));
-            }
-        }
-        code.append(String.format("return new %s (", psiClass.getName()));
-        for (int i = 0; i < parameters.length; i++) {
-            PsiParameter parameter = parameters[i];
-            if (i < parameters.length - 1) {
-                code.append(String.format("%s,", parameter.getName()));
-            } else {
-                code.append(String.format("%s); }", parameter.getName()));
-            }
-        }
-
-        PsiMethod staticConstructor = elementFactory.createMethodFromText(code.toString(), psiClass);
-        return (PsiMethod) psiClass.addAfter(staticConstructor, psiConstructor);
     }
 
     private void createGetters(MakeImmutableVisitor visitor, PsiClass psiClass, PsiElementFactory elementFactory, PsiMethod staticConstructor) {
@@ -102,7 +120,7 @@ public class CodeGenerator {
             existingFieldNames.add(psiField.getName());
         }
 
-        PsiParameter[] constructorParameters = visitor.getConstructorParameters();
+        PsiParameter[] constructorParameters = visitor.getMaxConstructorParameters();
         for (int i = constructorParameters.length - 1; i >= 0; i--) {
             PsiParameter psiParameter = constructorParameters[i];
             if (!existingFieldNames.contains(psiParameter.getName())) {

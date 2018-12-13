@@ -72,7 +72,6 @@ public final class Person {
 - [ ] Create static constructor `of` matching "normal" constructor only if it does not already exists.
 - [ ] Create getters only if they do not already exists.
 - [ ] Create with-Methods only if they do not already exists.
-- [ ] Add support for multiple constructors.
 - [ ] Add support for parameterized classes (`public class SomeClass<SomeType> { ... }`).
 
 ## License

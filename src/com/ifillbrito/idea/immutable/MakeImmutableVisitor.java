@@ -2,32 +2,18 @@ package com.ifillbrito.idea.immutable;
 
 import com.intellij.psi.*;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MakeImmutableVisitor extends PsiRecursiveElementVisitor {
 
     private PsiClass psiClass;
-    private List<PsiField> psiFields;
-    private PsiMethod psiConstructor;
-
-    public MakeImmutableVisitor() {
-        psiFields = new ArrayList<>();
-    }
 
     @Override
     public void visitElement(PsiElement element) {
         if (element instanceof PsiClass) {
-            psiClass = (PsiClass) element;
-        } else if (element instanceof PsiField) {
-            psiFields.add((PsiField) element);
-        } else if (element instanceof PsiMethod) {
-            PsiMethod method = (PsiMethod) element;
-            if (method.isConstructor()) {
-                if (psiConstructor != null ){
-                    throw new RuntimeException("Only one constructor allowed.");
-                }
-                psiConstructor = (PsiMethod) element;
+            if (psiClass == null) {
+                psiClass = (PsiClass) element;
             }
         }
         super.visitElement(element);
@@ -38,14 +24,46 @@ public class MakeImmutableVisitor extends PsiRecursiveElementVisitor {
     }
 
     public List<PsiField> getPsiFields() {
-        return psiFields;
+        return Arrays.asList(psiClass.getAllFields());
     }
 
-    public PsiMethod getPsiConstructor() {
-        return psiConstructor;
+    public List<PsiMethod> getPsiConstructors() {
+        return Arrays.asList(psiClass.getConstructors());
     }
 
-    public PsiParameter[] getConstructorParameters() {
-        return psiConstructor.getParameterList().getParameters();
+    public PsiMethod getPsiMaxConstructor() {
+        PsiMethod maxConstructor = null;
+        for (PsiMethod psiConstructor : getPsiConstructors()) {
+            if (maxConstructor == null || getParameterLength(maxConstructor) < getParameterLength(psiConstructor)) {
+                maxConstructor = psiConstructor;
+            }
+        }
+        return maxConstructor;
+    }
+
+    private int getParameterLength(PsiMethod maxConstructor) {
+        return maxConstructor.getParameterList().getParameters().length;
+    }
+
+    public PsiParameter[] getMaxConstructorParameters() {
+        return getPsiMaxConstructor().getParameterList().getParameters();
+    }
+
+    public String getStaticConstructorParameters() {
+        PsiTypeParameter[] typeParameters = psiClass.getTypeParameters();
+        StringBuilder parameters = new StringBuilder();
+        for (int i = 0; i < typeParameters.length; i++) {
+            PsiTypeParameter typeParameter = typeParameters[i];
+            if (i == 0) {
+                parameters.append("<");
+            }
+            parameters.append(typeParameter.getText());
+            if (i < typeParameters.length - 1) {
+                parameters.append(",");
+            } else {
+                parameters.append(">");
+            }
+        }
+        return parameters.toString();
     }
 }
