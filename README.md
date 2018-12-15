@@ -1,75 +1,103 @@
 # Make Immutable IDEA-Plugin
 This plugin makes a class immutable by applying the following changes:
      
-- Class modifier "final" is added is not present.
-- Fields modifier "final" is added is not present.
-- Constructor/s visibility changed to private.
-- Generation of static constructor (method name: "of") for each private constructor.
-- Generation of getters.
-- Generation of withers (withXYZ Methods).
+1. Class modifier `final` is added is not present.
+2. Fields modifier `final` is added is not present.
+3. Constructor/s visibility changed to `private`.
+4. Generation of static constructor (method name: `of`) for each private constructor.
+5. Generation of `getters`.
+6. Generation of `withers` (`withXYZ` Methods).
 
 ## Usage
-To Generate the necessary code go to:
 
-Code | Generate (Alt + Insert) | Make Immutable
+- **Precondition**: This plugin requires the existence of at least one constructor.
+- **Expectation**: 
+    - The methods are generated only if there is no method matching the signature.
+    - `getters` and `withers` are generated based on the class fields and constructors arguments (see example below)
+- **Usage**: Code | Generate (Alt + Insert) | Make Immutable
 
 ## Example
 Let's assume you have the following class (no getters and setters):
 ```java
-public class Person {
-    
-    private String lastName;
-    private String firstName;
-    private LocalDate birthday;
+public class SomeClass<T, R> {
 
-    public Person(String lastName, String firstName, LocalDate birthday) {
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.birthday = birthday;
+    private String value1;
+    private T value2;
+    private R value3;
+    private boolean value4;
+
+    public SomeClass(String value1a, String value1b, T value2, R value3, boolean value4) {
+        this.value1 = value1a + value1b;
+        this.value2 = value2;
+        this.value3 = value3;
+        this.value4 = value4;
     }
 }
 ```
 Then, if you run the plugin 'Make Immutable' you would obtain the following result:
 ```java
-public final class Person {
+public final class SomeClass<T, R> {
 
-    private final String lastName;
-    private final String firstName;
-    private final LocalDate birthday;
+    private final String value1;
+    private final T value2;
+    private final R value3;
+    private final boolean value4;
 
-    private Person(String lastName, String firstName, LocalDate birthday) {
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.birthday = birthday;
+    private SomeClass(String value1a, String value1b, T value2, R value3, boolean value4) {
+        this.value1 = value1a + value1b;
+        this.value2 = value2;
+        this.value3 = value3;
+        this.value4 = value4;
     }
 
-    public static Person of(String lastName, String firstName, LocalDate birthday) {
-        return new Person(lastName, firstName, birthday);
+    public static <T, R> SomeClass of(String value1a, String value1b, T value2, R value3, boolean value4) {
+        return new SomeClass<>(value1a, value1b, value2, value3, value4);
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getValue1() {
+        return this.value1;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public T getValue2() {
+        return this.value2;
     }
 
-    public LocalDate getBirthday() {
-        return birthday;
+    public R getValue3() {
+        return this.value3;
     }
 
-    public Person withLastName(String lastName) {
-        return of(lastName, getFirstName(), getBirthday());
+    public boolean isValue4() {
+        return this.value4;
     }
 
-    public Person withFirstName(String firstName) {
-        return of(getLastName(), firstName, getBirthday());
+    public String getValue1a() {
+        throw new IllegalArgumentException("This method must be implemented."); // TODO
     }
 
-    public Person withBirthday(LocalDate birthday) {
-        return of(getLastName(), getFirstName(), birthday);
+    public String getValue1b() {
+        throw new IllegalArgumentException("This method must be implemented."); // TODO
     }
+
+    public SomeClass withValue1a(String value1a) {
+        return of(value1a, getValue1b(), getValue2(), getValue3(), isValue4());
+    }
+
+    public SomeClass withValue1b(String value1b) {
+        return of(getValue1a(), value1b, getValue2(), getValue3(), isValue4());
+    }
+
+    public SomeClass withValue2(T value2) {
+        return of(getValue1a(), getValue1b(), value2, getValue3(), isValue4());
+    }
+
+    public SomeClass withValue3(R value3) {
+        return of(getValue1a(), getValue1b(), getValue2(), value3, isValue4());
+    }
+
+    public SomeClass withValue4(boolean value4) {
+        return of(getValue1a(), getValue1b(), getValue2(), getValue3(), value4);
+    }
+
 
 }
 ``` 

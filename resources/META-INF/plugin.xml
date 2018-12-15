@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.ifillbrito.immutable</id>
     <name>Make Immutable</name>
-    <version>0.2</version>
+    <version>1.0</version>
     <vendor email="grebiel.ifillbrito@gmail.com" url="https://github.com/ifillbrito">Grebiel Ifill Brito</vendor>
 
     <description><![CDATA[
@@ -17,6 +17,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      Versin 1.0:
+      <ul>
+          <li>Code refactored</li>
+          <li>First stable release.</li>
+      </ul>
       Versin 0.2:
       <ul>
           <li>Bug fix: static no argument constructor is generated correctly.</li>
