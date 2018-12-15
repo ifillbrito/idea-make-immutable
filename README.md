@@ -71,11 +71,11 @@ public final class SomeClass<T, R> {
     }
 
     public String getValue1a() {
-        throw new IllegalArgumentException("This method must be implemented."); // TODO
+        throw new RuntimeException("This method must be implemented."); // TODO
     }
 
     public String getValue1b() {
-        throw new IllegalArgumentException("This method must be implemented."); // TODO
+        throw new RuntimeException("This method must be implemented."); // TODO
     }
 
     public SomeClass withValue1a(String value1a) {

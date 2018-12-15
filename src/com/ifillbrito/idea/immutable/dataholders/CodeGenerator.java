@@ -115,7 +115,7 @@ public class CodeGenerator {
 
         String templateForConstructorArgument =
                 "public ${fieldType} ${getterPrefix}${capitalizedFieldName}() { " +
-                        "throw new IllegalArgumentException(\"This method must be implemented.\"); // TODO\n" +
+                        "throw new RuntimeException(\"This method must be implemented.\"); // TODO\n" +
                         "}";
         for (MethodArgument argument : getMaxConstructor().getArguments()) {
             if (!getterNames.contains(argument.getPlainName())) {
