@@ -1,4 +1,4 @@
-# Make Immutable IDEA-Plugin
+# Make Immutable (IDEA-Plugin)
 This plugin makes a class immutable by applying the following changes:
      
 1. Class modifier `final` is added is not present.
@@ -101,6 +101,15 @@ public final class SomeClass<T, R> {
 
 }
 ``` 
+## TODOs
+- [ ] Support for classes without constructror.
+This plugin requires the class to have at least 
+one constructor (see example above). If there is
+no constructor, then the plugin should create a
+default one where all the fields are set to the 
+Java default values.
+
+
 
 ## License
 
