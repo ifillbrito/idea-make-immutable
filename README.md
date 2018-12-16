@@ -1,18 +1,27 @@
 # Make Immutable (IDEA-Plugin)
+## Motivation
+This plugin was inspired by the project [Immutables](https://immutables.github.io/). 
+- If you can use annotations in your project, then I recommend you to take a look at 
+[Immutables](https://immutables.github.io/).
+- If you need something really simple and rather generating cource code in place, that you
+can easily modify, then take a look at this plugin.
+
+## Description
 This plugin makes a class immutable by applying the following changes:
      
 1. Class modifier `final` is added is not present.
 2. Fields modifier `final` is added is not present.
-3. Constructor/s visibility changed to `private`.
+3. Constructor/s visibility changed to `private`. 
+The class must have at least one constructor.
 4. Generation of static constructor (method name: `of`) for each private constructor.
 5. Generation of `getters`.
 6. Generation of `withers` (`withXYZ` Methods).
 
 ## Usage
 
-- **Precondition**: This plugin requires the existence of at least one constructor.
+- **Precondition**: The class must have at least one constructor.
 - **Expectation**: 
-    - The methods are generated only if there is no method matching the signature.
+    - The methods are generated only if there is no methods matching the signature.
     - `getters` and `withers` are generated based on the class fields and constructors arguments (see example below)
 - **Usage**: Code | Generate (Alt + Insert) | Make Immutable
 

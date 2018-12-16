@@ -14,24 +14,14 @@
         <li>Generation of getters</li>
         <li>Generation of withers (withXYZ methods). This methods allow creating a new immutable object based on the current one.</li>
       </ul>
+
+      Source Code: <a href="https://github.com/ifillbrito/idea-make-immutable" alt="https://github.com/ifillbrito/idea-make-immutable">https://github.com/ifillbrito/idea-make-immutable</a>.
     ]]></description>
 
     <change-notes><![CDATA[
-      Versin 1.0:
+      Version 1.0:
       <ul>
-          <li>Code refactored</li>
-          <li>First stable release.</li>
-      </ul>
-      Versin 0.2:
-      <ul>
-          <li>Bug fix: static no argument constructor is generated correctly.</li>
-          <li>Support for multiple static constructors added. The static constructors are generated based on existing constructors.</li>
-          <li>Support for parameterized classes added.</li>
-          <li>Generation of existing methods is skipped.</li>
-      </ul>
-      Version 0.1:
-      <ul>
-          <li>First Release</li>
+          <li>First Release.</li>
       </ul>
     ]]>
     </change-notes>
