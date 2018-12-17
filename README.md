@@ -17,6 +17,9 @@ The class must have at least one constructor.
 5. Generation of `getters`.
 6. Generation of `withers` (`withXYZ` Methods).
 
+## Download
+This plugin can be downloaded from the JetBrains Plugins Repository: [Make Immutable](https://plugins.jetbrains.com/plugin/11436-make-immutable)
+
 ## Usage
 
 - **Precondition**: The class must have at least one constructor.
