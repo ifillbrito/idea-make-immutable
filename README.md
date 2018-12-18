@@ -9,8 +9,8 @@ can easily modify, then take a look at this plugin.
 ## Description
 This plugin makes a class immutable by applying the following changes:
      
-1. Class modifier `final` is added is not present.
-2. Fields modifier `final` is added is not present.
+1. Class modifier `final` is added if not present.
+2. Fields modifier `final` is added if not present.
 3. Constructor/s visibility changed to `private`. 
 The class must have at least one constructor.
 4. Generation of static constructor (method name: `of`) for each private constructor.
